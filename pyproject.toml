@@ -1,0 +1,23 @@
+[project]
+name = "my-website"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "django>=6,<6.1",
+    "djlint>=1.36.4",
+    "ruff>=0.15.3",
+    "wagtail==7.3",
+]
+
+[tool.djlint]
+profile = "django"
+ignore = "T032"
+indent = 2
+format_attribute_template_tag = true
+format_attributes = true
+max_blank_lines = 1
+close_void_tags = true
+preserve_blank_lines = true
+blank_line_after_tag = "extends"
