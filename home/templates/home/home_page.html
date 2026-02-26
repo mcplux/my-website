@@ -1,13 +1,59 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 <!-- load wagtailcore_tags by adding this: -->
 {% load wagtailcore_tags %}
 
-{% block body_class %}
-  template-homepage
-{% endblock body_class %}
-
 <!-- replace everything below with: -->
 {% block content %}
-  {{ page.about_content }}
+  <section class="relative min-h-screen flex items-center justify-center bg-neutral-950 text-white overflow-hidden">
+
+    <!-- Background accent glow -->
+    <div class="absolute inset-0">
+      <div class="absolute -top-40 -right-40 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-0 w-72 h-72 bg-emerald-400/10 rounded-full blur-2xl"></div>
+    </div>
+
+    <div class="relative z-10 mx-auto max-w-5xl px-6 text-center">
+      {% if page.hero_image %}
+        <div class="mb-10 flex justify-center">
+          <img src="{{ page.hero_image.file.url }}"
+               alt="{{ page.hero_title }}"
+               class="w-40 h-40 object-cover rounded-full border-4 border-emerald-500 shadow-2xl shadow-emerald-500/20" />
+        </div>
+      {% endif %}
+
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6">{{ page.hero_title }}</h1>
+
+      <p class="text-xl sm:text-2xl text-emerald-400 font-medium">{{ page.hero_role }}</p>
+    </div>
+  </section>
+
+  <section class="bg-neutral-950 text-neutral-200 py-32 border-t border-neutral-800">
+    <div class="mx-auto max-w-4xl px-6">
+
+      {% for block in page.about_content %}
+        {% if block.block_type == "heading" %}
+          <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-12">
+            <span class="text-emerald-500">#</span>
+            {{ block.value }}
+          </h2>
+        {% elif block.block_type == "paragraph" %}
+          <div class="prose prose-invert prose-neutral max-w-none mb-10 prose-p:text-neutral-300 prose-a:text-purple-400 [&_b]:text-emerald-400">
+            {{ block.value }}
+          </div>
+        {% elif block.block_type == "image" %}
+          <div class="my-16">
+            <img src="{{ block.value.file.url }}"
+                 class="rounded-2xl shadow-xl shadow-emerald-500/10" />
+          </div>
+        {% elif block.block_type == "quote" %}
+          <blockquote class="border-l-4 border-emerald-500 pl-6 italic text-lg text-neutral-300 my-16">
+            {{ block.value }}
+          </blockquote>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
 {% endblock content %}
