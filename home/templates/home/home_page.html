@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% load static %}
-
 <!-- load wagtailcore_tags by adding this: -->
 {% load wagtailcore_tags %}
 
@@ -73,6 +71,63 @@
           </blockquote>
         {% endif %}
       {% endfor %}
+    </div>
+  </section>
+
+  <section class="bg-neutral-950 text-white py-32 border-t border-neutral-800">
+    <div class="mx-auto max-w-6xl px-6">
+
+      <!-- Section Header -->
+      <div class="flex items-end justify-between mb-16">
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">
+          <span class="text-emerald-500">#</span> Projects
+        </h2>
+
+        <a href="/projects"
+           class="text-sm font-medium text-emerald-400 hover:text-emerald-300 transition-colors">View all →</a>
+      </div>
+
+      <!-- Grid -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+
+        {% for project in page.featured_projects.all %}
+          <a href="{{ project.url }}"
+             class="group block bg-neutral-900/60 backdrop-blur-sm border border-neutral-800 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all duration-300">
+
+            <!-- Cover -->
+            {% if project.cover_image %}
+              <div class="relative overflow-hidden">
+                <img src="{{ project.cover_image.file.url }}"
+                     class="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500" />
+
+                <div class="absolute inset-0 bg-linear-to-t from-neutral-950 via-neutral-950/20 to-transparent"></div>
+              </div>
+            {% endif %}
+
+            <!-- Content -->
+            <div class="p-6">
+
+              <h3 class="text-xl font-semibold mb-3 group-hover:text-emerald-400 transition-colors">{{ project.title }}</h3>
+
+              <p class="text-neutral-400 text-sm leading-relaxed mb-5">{{ project.description|truncatewords:20 }}</p>
+
+              <!-- Skills -->
+              <div class="flex flex-wrap gap-2">
+                {% for skill in project.skills.all %}
+                  <span class="px-3 py-1 text-xs font-medium rounded-full transition-transform duration-200 group-hover:scale-105"
+                        style="color: {{ skill.color }};
+                               background-color: {{ skill.color }}30;
+                               border: 1px solid {{ skill.color }}">{{ skill.name }}</span>
+                {% endfor %}
+              </div>
+
+            </div>
+
+          </a>
+        {% endfor %}
+
+      </div>
+
     </div>
   </section>
 {% endblock content %}

@@ -13,7 +13,7 @@ dependencies = [
 
 [tool.djlint]
 profile = "django"
-ignore = "T032,H031,H006,H013"
+ignore = "D018,T032,H031,H006,H013"
 indent = 2
 format_attribute_template_tag = true
 format_attributes = true

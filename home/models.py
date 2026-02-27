@@ -1,10 +1,9 @@
 from django.db import models
 
-from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.models import Page
 from wagtail.fields import StreamField
-from wagtail.images.blocks import ImageChooserBlock
+from modelcluster.fields import ParentalManyToManyField
 
 from .blocks import AboutBlock, SocialLinkBlock
 
@@ -31,8 +30,10 @@ class HomePage(Page):
         use_json_field=True,
         blank=True,
     )
-
-    show_projects_section = models.BooleanField(default=True)
+    featured_projects = ParentalManyToManyField(
+        "projects.ProjectPage",
+        blank=True,
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel("hero_title"),
@@ -40,5 +41,5 @@ class HomePage(Page):
         FieldPanel("hero_image"),
         FieldPanel("social_links"),
         FieldPanel("about_content"),
-        FieldPanel("show_projects_section"),
+        FieldPanel("featured_projects"),
     ]

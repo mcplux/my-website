@@ -13,3 +13,4 @@ wheels/
 .vscode/
 static_dist/
 staticfiles/
+db*
