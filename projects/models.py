@@ -1,8 +1,12 @@
 from django.db import models
+
 from wagtail.admin.panels import FieldPanel
+from wagtail.fields import StreamField
 from wagtail.snippets.models import register_snippet
 from wagtail.models import Page
 from modelcluster.fields import ParentalManyToManyField
+
+from .blocks import ProjectLinkBlock, ProjectContentBlock
 
 
 # Create your models here.
@@ -30,7 +34,19 @@ class ProjectPage(Page):
         related_name="+",
     )
 
-    description = models.TextField()
+    description = models.TextField(help_text="Short description for previews")
+
+    content = StreamField(
+        ProjectContentBlock(),
+        use_json_field=True,
+        blank=True,
+    )
+
+    project_links = StreamField(
+        (("link", ProjectLinkBlock()),),
+        use_json_field=True,
+        blank=True,
+    )
 
     skills = ParentalManyToManyField(
         "projects.Skill",
@@ -40,18 +56,18 @@ class ProjectPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("cover_image"),
         FieldPanel("description"),
+        FieldPanel("content"),
+        FieldPanel("project_links"),
         FieldPanel("skills"),
     ]
 
 
 class ProjectsPage(Page):
-    content = models.TextField()
-    projects = ParentalManyToManyField(
-        "projects.ProjectPage",
-        blank=True,
-    )
+    def get_context(self, request):
+        context = super().get_context(request)
 
-    content_panels = Page.content_panels + [
-        FieldPanel("content"),
-        FieldPanel("projects"),
-    ]
+        context["projects"] = (
+            ProjectPage.objects.live().child_of(self).order_by("-first_published_at"),
+        )[0]
+
+        return context
