@@ -27,6 +27,25 @@
       <h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6">{{ page.hero_title }}</h1>
 
       <p class="text-xl sm:text-2xl text-emerald-400 font-medium">{{ page.hero_role }}</p>
+
+      <div class="mt-10 flex justify-center gap-6">
+
+        {% for block in page.social_links %}
+          <a href="{{ block.value.url }}"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="group flex items-center gap-2 text-neutral-400 hover:text-emerald-400 transition-colors duration-300">
+
+            <i data-lucide="{{ block.value.icon }}"
+               class="w-5 h-5 transition-transform duration-300 group-hover:scale-110">
+            </i>
+
+            <span class="text-sm hidden sm:inline">{{ block.value.name }}</span>
+
+          </a>
+        {% endfor %}
+
+      </div>
     </div>
   </section>
 
@@ -57,3 +76,8 @@
     </div>
   </section>
 {% endblock content %}
+
+{% block extra_js %}
+  <script src="//unpkg.com/lucide@0.575.0"></script>
+  <script>lucide.createIcons();</script>
+{% endblock extra_js %}

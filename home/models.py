@@ -6,6 +6,8 @@ from wagtail.models import Page
 from wagtail.fields import StreamField
 from wagtail.images.blocks import ImageChooserBlock
 
+from .blocks import AboutBlock, SocialLinkBlock
+
 
 class HomePage(Page):
     hero_title = models.CharField(max_length=120, blank=True, help_text="Your name")
@@ -19,13 +21,13 @@ class HomePage(Page):
         on_delete=models.SET_NULL,
         related_name="+",
     )
+    social_links = StreamField(
+        (("abc", SocialLinkBlock()),),
+        use_json_field=True,
+        blank=True,
+    )
     about_content = StreamField(
-        [
-            ("heading", blocks.CharBlock()),
-            ("paragraph", blocks.RichTextBlock()),
-            ("image", ImageChooserBlock()),
-            ("quote", blocks.BlockQuoteBlock()),
-        ],
+        AboutBlock(),
         use_json_field=True,
         blank=True,
     )
@@ -36,6 +38,7 @@ class HomePage(Page):
         FieldPanel("hero_title"),
         FieldPanel("hero_role"),
         FieldPanel("hero_image"),
+        FieldPanel("social_links"),
         FieldPanel("about_content"),
         FieldPanel("show_projects_section"),
     ]
