@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 <!-- load wagtailcore_tags by adding this: -->
-{% load wagtailcore_tags %}
+{% load wagtailsettings_tags %}
+{% get_settings %}
 
 <!-- replace everything below with: -->
 {% block content %}
@@ -24,11 +25,10 @@
 
       <h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6">{{ page.hero_title }}</h1>
 
-      <p class="text-xl sm:text-2xl text-emerald-400 font-medium">{{ page.hero_role }}</p>
+      <p class="text-xl sm:text-2xl text-emerald-400 font-medium mb-6">{{ page.hero_role }}</p>
 
-      <div class="mt-10 flex justify-center gap-6">
-
-        {% for block in page.social_links %}
+      <div class="mt-10 flex justify-center gap-6 mb-6">
+        {% for block in settings.core.SiteSocialSettings.social_links %}
           <a href="{{ block.value.url }}"
              target="_blank"
              rel="noopener noreferrer"
@@ -42,8 +42,14 @@
 
           </a>
         {% endfor %}
-
       </div>
+
+      <nav class="flex items-center justify-center gap-10 text-sm font-medium text-neutral-300 p-5">
+        {% for item in settings.core.SiteNavigationSettings.navigation_links.all %}
+          <a href="{{ item.link }}"
+             class="hover:text-emerald-400 transition-colors">{{ item.title }}</a>
+        {% endfor %}
+      </nav>
     </div>
   </section>
 
@@ -130,6 +136,34 @@
 
     </div>
   </section>
+
+  <footer class="bg-neutral-950 border-t border-neutral-800">
+    <div class="mx-auto max-w-6xl p-6">
+      <div class="flex items-start justify-between">
+        <nav class="flex gap-5 text-sm font-medium text-neutral-300">
+          {% for item in settings.core.SiteNavigationSettings.navigation_links.all %}
+            <a href="{{ item.link }}"
+               class="hover:text-emerald-400 transition-colors">{{ item.title }}</a>
+          {% endfor %}
+        </nav>
+
+        <div class="flex justify-center gap-6">
+          {% for block in settings.core.SiteSocialSettings.social_links %}
+            <a href="{{ block.value.url }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="group flex items-center gap-2 text-neutral-400 hover:text-emerald-400 transition-colors duration-300">
+
+              <i data-lucide="{{ block.value.icon }}"
+                 class="w-5 h-5 transition-transform duration-300 group-hover:scale-110">
+              </i>
+
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </footer>
 {% endblock content %}
 
 {% block extra_js %}

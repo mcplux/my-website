@@ -5,7 +5,7 @@ from wagtail.models import Page
 from wagtail.fields import StreamField
 from modelcluster.fields import ParentalManyToManyField
 
-from .blocks import AboutBlock, SocialLinkBlock
+from .blocks import AboutBlock
 
 
 class HomePage(Page):
@@ -19,11 +19,6 @@ class HomePage(Page):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="+",
-    )
-    social_links = StreamField(
-        (("abc", SocialLinkBlock()),),
-        use_json_field=True,
-        blank=True,
     )
     about_content = StreamField(
         AboutBlock(),
@@ -39,7 +34,6 @@ class HomePage(Page):
         FieldPanel("hero_title"),
         FieldPanel("hero_role"),
         FieldPanel("hero_image"),
-        FieldPanel("social_links"),
         FieldPanel("about_content"),
         FieldPanel("featured_projects"),
     ]
