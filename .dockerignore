@@ -4,6 +4,7 @@
 *.sqlite3
 
 # Python and others
+.venv/
 __pycache__
 *.pyc
 .DS_Store

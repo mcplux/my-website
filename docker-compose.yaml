@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: website-postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: website-web
+    restart: always
+    env_file:
+      - .env
+    develop:
+      watch:
+        - path: .
+          action: sync
+          target: /app
+          ignore:
+            - ./.venv
+        - path: ./pyproject.toml
+          action: rebuild
+    ports:
+      - "${APP_PORT}:8000"
+    volumes:
+      - media_data:/app/media
+
+  adminer:
+    image: adminer:latest
+    container_name: website-adminer
+    restart: always
+    ports:
+      - "${ADMINER_PORT}:8080"
+    depends_on:
+      - db
+
+volumes:
+  pg_data:
+  media_data:

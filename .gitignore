@@ -11,6 +11,8 @@ wheels/
 
 
 .vscode/
-static_dist/
+*dist*/
 staticfiles/
 db*
+.env*
+!.env.example
