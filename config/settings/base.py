@@ -24,9 +24,9 @@ BASE_DIR = PROJECT_DIR.parent
 # Application definition
 
 INSTALLED_APPS = [
-    "home",
-    "search",
-    "projects",
+    "apps.home",
+    "apps.search",
+    "apps.projects",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -60,7 +60,7 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
-ROOT_URLCONF = "website.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
@@ -80,7 +80,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "website.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
@@ -161,7 +161,7 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
 
 # Wagtail settings
 
-WAGTAIL_SITE_NAME = "website"
+WAGTAIL_SITE_NAME = "config"
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html
