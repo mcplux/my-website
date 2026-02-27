@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+  <section class="bg-neutral-950 text-white">
+    <!-- HERO -->
+    <div class="relative min-h-screen border-b border-neutral-800">
+
+      {% if page.cover_image %}
+        <div class="h-full overflow-hidden">
+          <img src="{{ page.cover_image.file.url }}"
+               class="w-full h-full object-cover opacity-70" />
+        </div>
+      {% endif %}
+
+      <div class="absolute inset-0 bg-linear-to-t from-neutral-950 via-neutral-950/80 to-transparent"></div>
+
+      <div class="absolute bottom-0 w-full">
+        <div class="mx-auto max-w-4xl px-6 pb-16">
+
+          <h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-6">{{ page.title }}</h1>
+
+          <p class="text-neutral-300 max-w-2xl text-lg">{{ page.description }}</p>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- META SECTION -->
+    <div class="mx-auto max-w-4xl px-6 py-12">
+
+      <!-- Skills -->
+      <div class="flex flex-wrap gap-3 mb-8">
+        {% for skill in page.skills.all %}
+          <span class="px-3 py-1 text-xs font-medium rounded-full"
+                style="color: {{ skill.color }};
+                       background-color: {{ skill.color }}30;
+                       border: 1px solid {{ skill.color }}">{{ skill.name }}</span>
+        {% endfor %}
+      </div>
+
+      <!-- Links -->
+      <div class="flex flex-wrap gap-4">
+        {% for block in page.project_links %}
+          <a href="{{ block.value.url }}"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-neutral-900 border border-neutral-800 hover:border-emerald-500/40 hover:text-emerald-400 transition-all">
+
+            {% if block.value.icon %}<i data-lucide="{{ block.value.icon }}" class="w-4 h-4"></i>{% endif %}
+
+            <span class="text-sm font-medium">{{ block.value.label }}</span>
+
+          </a>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <article class="mx-auto max-w-3xl px-6 pb-32 prose prose-invert prose-neutral prose-headings:text-white prose-a:text-purple-400 [&_b]:text-emerald-400 prose-code:text-emerald-300">
+
+      {{ page.content }}
+
+    </article>
+
+    <!-- BACK LINK -->
+    <div class="mx-auto max-w-3xl px-6 pb-20">
+      <a href="/projects"
+         class="text-sm text-neutral-400 hover:text-emerald-400 transition-colors">← Back to Projects</a>
+    </div>
+
+  </section>
+
+{% endblock content %}
+
+{% block extra_js %}
+  <script src="//unpkg.com/lucide@0.575.0"></script>
+  <script>lucide.createIcons();</script>
+{% endblock extra_js %}
