@@ -26,15 +26,6 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-    develop:
-      watch:
-        - path: .
-          action: sync
-          target: /app
-          ignore:
-            - ./.venv
-        - path: ./pyproject.toml
-          action: rebuild
     volumes:
       - media_data:/app/media
       - static_data:/app/staticfiles
