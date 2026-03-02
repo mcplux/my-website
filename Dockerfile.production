@@ -1,0 +1,80 @@
+# =========================
+# STAGE 1 — Builder
+# =========================
+FROM python:3.12-slim-bookworm AS builder
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+  PYTHONUNBUFFERED=1 \
+  PATH="/app/.venv/bin:$PATH"
+
+WORKDIR /app
+
+# Required dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  build-essential \
+  curl \
+  git \
+  libpq-dev \
+  libjpeg-dev \
+  zlib1g-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+# Install tailwindcss and uv
+RUN curl -LsSfo /usr/bin/tailwindcss \
+  https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 \
+  && chmod +x /usr/bin/tailwindcss
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Add uv to the path
+ENV PATH="/root/.local/bin:$PATH"
+
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev
+COPY . .
+
+# Build Tailwind
+RUN tailwindcss -i /app/static_src/css/input.css -o /app/static_dist/css/output.css --minify
+
+# Collect static
+RUN python manage.py collectstatic --noinput
+
+
+# =========================
+# STAGE 2 — Runtime
+# =========================
+FROM python:3.12-slim-bookworm AS runtime
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+  PYTHONUNBUFFERED=1 \
+  PATH="/app/.venv/bin:$PATH"
+
+WORKDIR /app
+
+# Required dependencies in runtime
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  libpq5 \
+  libjpeg62-turbo \
+  zlib1g \
+  && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN addgroup --system django && adduser --system --ingroup django django
+
+# Copy virtual environment
+COPY --from=builder /app/.venv /app/.venv
+
+# Copy static files
+COPY --from=builder /app/staticfiles /app/staticfiles
+
+# Copy the rest of the project
+COPY . .
+
+# Change owner
+RUN chown -R django:django /app
+USER django
+
+EXPOSE 8000
+
+ENV GUNICORN_CMD_ARGS="--bind=0.0.0.0:8000 --workers=1"
+ENTRYPOINT ["gunicorn", "config.wsgi:application"]
+# ENTRYPOINT [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]

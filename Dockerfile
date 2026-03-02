@@ -1,8 +1,7 @@
 # Python runtime based on Debian 12
 FROM python:3.12-slim-bookworm
 
-ENV PYTHONUNBUFFERED=1\
-    DJANGO_SETTINGS_MODULE=config.settings.dev
+ENV PYTHONUNBUFFERED=1
 
 # Install required packages for Python, uv, Django and Wagtail
 RUN apt-get update --yes --quiet && apt-get install --yes --quiet --no-install-recommends \
