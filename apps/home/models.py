@@ -37,3 +37,12 @@ class HomePage(Page):
         FieldPanel("about_content"),
         FieldPanel("featured_projects"),
     ]
+
+    def get_context(self, request):
+        context = super().get_context(request)
+        featured_projects = self.featured_projects.all().order_by(
+            "-weight", "-first_published_at"
+        )
+        context["featured_projects"] = featured_projects
+
+        return context

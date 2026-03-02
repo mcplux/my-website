@@ -1,10 +1,11 @@
 from django.db import models
+from django.core.validators import MaxValueValidator
 
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.fields import StreamField
+from wagtail.models import Page, Orderable
 from wagtail.snippets.models import register_snippet
-from wagtail.models import Page
-from modelcluster.fields import ParentalManyToManyField
+from modelcluster.fields import ParentalManyToManyField, ParentalKey
 
 from .blocks import ProjectLinkBlock, ProjectContentBlock
 
@@ -21,11 +22,39 @@ class Skill(models.Model):
         help_text="Text color HEX (e.g. #3B82F6)",
     )
 
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("slug"),
+        FieldPanel("color"),
+    ]
+
     def __str__(self):
         return self.name
 
 
+class ProjectSkill(Orderable):
+    page = ParentalKey(
+        "projects.ProjectPage",
+        related_name="project_skills",
+        on_delete=models.CASCADE,
+    )
+    skill = models.ForeignKey(
+        "projects.Skill",
+        on_delete=models.CASCADE,
+        related_name="+",
+    )
+
+    panels = [
+        FieldPanel("skill"),
+    ]
+
+
 class ProjectPage(Page):
+    weight = models.PositiveSmallIntegerField(
+        default=0,
+        validators=(MaxValueValidator(100),),
+    )
+
     cover_image = models.ForeignKey(
         "wagtailimages.Image",
         null=True,
@@ -54,11 +83,12 @@ class ProjectPage(Page):
     )
 
     content_panels = Page.content_panels + [
+        FieldPanel("weight"),
         FieldPanel("cover_image"),
         FieldPanel("description"),
         FieldPanel("content"),
         FieldPanel("project_links"),
-        FieldPanel("skills"),
+        InlinePanel("project_skills", label="Skills"),
     ]
 
 
@@ -66,8 +96,12 @@ class ProjectsPage(Page):
     def get_context(self, request):
         context = super().get_context(request)
 
-        context["projects"] = (
-            ProjectPage.objects.live().child_of(self).order_by("-first_published_at"),
-        )[0]
+        projects = (
+            ProjectPage.objects.live()
+            .child_of(self)
+            .order_by("-weight", "-first_published_at")
+        )
+
+        context["projects"] = projects
 
         return context
